@@ -179,3 +179,31 @@ mod turn_right_tests {
         assert_eq!(expected_pose, executor.query());
     }
 }
+
+// 执行集成指令，验证多条指令组合执行后的结果。
+mod integration_tests {
+    use super::*;
+
+    #[test]
+    fn should_return_expected_pose_given_command_sequence_is_mlmmrm() {
+        // 初始位置在原点，朝北方向。
+        let original_pose = Pose::new(0, 0, 'N');
+        let mut executor = Executor::new(original_pose);
+
+        // 按顺序执行指令序列 "MLMMRM"。
+        executor.execute("MLMMRM");
+
+        // 按照需求文档，车辆应处在 (-2, 2) 位置，且方向朝北。
+        let expected_pose = Pose::new(-2, 2, 'N');
+        assert_eq!(expected_pose, executor.query());
+    }
+
+    #[test]
+    fn should_return_default_pose_given_executor_is_default() {
+        // 使用 Default trait 创建executor实例，验证默认构造函数的行为。
+        let executor = Executor::default();
+
+        // 按照executor的默认实现，默认状态应为 (0, 0, N)。
+        assert_eq!(Pose::new(0, 0, 'N'), executor.query());
+    }
+}
